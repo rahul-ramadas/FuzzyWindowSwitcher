@@ -40,10 +40,12 @@ namespace FuzzyWindowSwitcher
 
             var windows = SystemWindow.FilterToplevelWindows(new Predicate<SystemWindow>(IsAppWindow));
 
-            m_Windows = new List<string>();
+            WindowList.DisplayMemberPath = "Title";
+
+            m_Windows = new List<SystemWindow>();
             foreach (var window in windows)
             {
-                m_Windows.Add(window.Title);
+                m_Windows.Add(window);
             }
 
             WindowList.ItemsSource = m_Windows;
@@ -81,6 +83,19 @@ namespace FuzzyWindowSwitcher
         }
 
         private System.Windows.Forms.NotifyIcon m_NotifyIcon;
-        private List<string> m_Windows;
+        private List<SystemWindow> m_Windows;
+
+        private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selectedItem = WindowList.SelectedItem;
+            if (selectedItem == null)
+            {
+                return;
+            }
+
+            var selectedWindow = selectedItem as SystemWindow;
+
+            SystemWindow.ForegroundWindow = selectedWindow;
+        }
     }
 }

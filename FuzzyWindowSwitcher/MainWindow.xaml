@@ -4,6 +4,6 @@
         Title="Fuzzy Window Search" Height="531" Width="608" WindowStartupLocation="CenterScreen" Icon="FuzzyWindowSwitcher.png">
     <Grid>
         <TextBox x:Name="FuzzySearchTitle" Margin="10,10,10,0" MaxLines="1" VerticalAlignment="Top" FontSize="13.333" Height="29.733" VerticalContentAlignment="Center" Padding="4,0,0,0"/>
-        <ListBox x:Name="WindowList" Margin="10,50,10,10" FontSize="13.333"/>
+        <ListBox x:Name="WindowList" Margin="10,50,10,10" FontSize="13.333" MouseDoubleClick="OnMouseDoubleClick"/>
     </Grid>
 </Window>
