@@ -79,6 +79,11 @@ namespace FuzzyWindowSwitcher
 
         private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            OnWindowSelected();
+        }
+
+        private void OnWindowSelected()
+        {
             var selectedItem = WindowList.SelectedItem;
             if (selectedItem == null)
             {
@@ -97,13 +102,45 @@ namespace FuzzyWindowSwitcher
         private void OnActivated(object sender, EventArgs e)
         {
             var windows = SystemWindow.FilterToplevelWindows(new Predicate<SystemWindow>(IsAppWindow));
-            m_Windows.Clear();
-            foreach (var window in windows)
+            Array.Sort(windows, (wnd1, wnd2) => wnd1.Title.CompareTo(wnd2.Title));
+
+            //
+            // If an item was already selected in the list, try to find it in the new list and
+            // select it.
+            //
+
+            var selectedItem = WindowList.SelectedItem;
+            int selectIndex = -1;
+
+            if (selectedItem != null)
             {
-                m_Windows.Add(window);
+                var selectedWindow = selectedItem as SystemWindow;
+                selectIndex = Array.FindIndex(windows, (wnd) => wnd.HWnd == selectedWindow.HWnd);
             }
-            m_Windows.Sort((wnd1, wnd2) => wnd1.Title.CompareTo(wnd2.Title));
+
+            m_Windows.Clear();
+            m_Windows.AddRange(windows);
+
             WindowList.Items.Refresh();
+            WindowList.UpdateLayout();
+
+            if (selectIndex != -1)
+            {
+                WindowList.SelectedIndex = selectIndex;
+                (WindowList.ItemContainerGenerator.ContainerFromIndex(selectIndex) as ListBoxItem).Focus();
+            }
+
+            FuzzySearchTitle.Focus();
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+            {
+                return;
+            }
+
+            OnWindowSelected();
         }
     }
 }
