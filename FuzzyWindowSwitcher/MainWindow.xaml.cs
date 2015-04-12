@@ -177,5 +177,10 @@ namespace FuzzyWindowSwitcher
             int curSel = WindowList.SelectedIndex;
             (WindowList.ItemContainerGenerator.ContainerFromIndex(curSel) as ListBoxItem).Focus();
         }
+
+        private void OnKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            FuzzySearchTitle.SelectAll();
+        }
     }
 }
