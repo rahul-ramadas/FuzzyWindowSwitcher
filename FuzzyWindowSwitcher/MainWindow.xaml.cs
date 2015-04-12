@@ -38,16 +38,8 @@ namespace FuzzyWindowSwitcher
 
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
 
-            var windows = SystemWindow.FilterToplevelWindows(new Predicate<SystemWindow>(IsAppWindow));
-
-            WindowList.DisplayMemberPath = "Title";
-
             m_Windows = new List<SystemWindow>();
-            foreach (var window in windows)
-            {
-                m_Windows.Add(window);
-            }
-
+            WindowList.DisplayMemberPath = "Title";
             WindowList.ItemsSource = m_Windows;
         }
 
@@ -61,7 +53,7 @@ namespace FuzzyWindowSwitcher
         {
             if (e.Key == Key.Escape)
             {
-                Close();
+                WindowState = WindowState.Minimized;
             }
         }
 
@@ -96,6 +88,22 @@ namespace FuzzyWindowSwitcher
             var selectedWindow = selectedItem as SystemWindow;
 
             SystemWindow.ForegroundWindow = selectedWindow;
+            if (selectedWindow.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+            {
+                selectedWindow.WindowState = System.Windows.Forms.FormWindowState.Normal;
+            }
+        }
+
+        private void OnActivated(object sender, EventArgs e)
+        {
+            var windows = SystemWindow.FilterToplevelWindows(new Predicate<SystemWindow>(IsAppWindow));
+            m_Windows.Clear();
+            foreach (var window in windows)
+            {
+                m_Windows.Add(window);
+            }
+            m_Windows.Sort((wnd1, wnd2) => wnd1.Title.CompareTo(wnd2.Title));
+            WindowList.Items.Refresh();
         }
     }
 }
