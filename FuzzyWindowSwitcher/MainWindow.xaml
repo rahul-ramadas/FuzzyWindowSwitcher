@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Fuzzy Window Search" Height="531" Width="608" WindowStartupLocation="CenterScreen" Icon="FuzzyWindowSwitcher.png" Activated="OnActivated">
     <Grid>
-        <TextBox x:Name="FuzzySearchTitle" Margin="10,10,10,0" MaxLines="1" VerticalAlignment="Top" FontSize="13.333" Height="29.733" VerticalContentAlignment="Center" Padding="4,0,0,0"/>
+        <TextBox x:Name="FuzzySearchTitle" Margin="10,10,10,0" MaxLines="1" VerticalAlignment="Top" FontSize="13.333" Height="29.733" VerticalContentAlignment="Center" Padding="4,0,0,0" PreviewKeyDown="OnPreviewKeyDown"/>
         <ListBox x:Name="WindowList" Margin="10,50,10,10" FontSize="13.333" MouseDoubleClick="OnMouseDoubleClick" KeyUp="OnKeyUp" IsSynchronizedWithCurrentItem="True"/>
     </Grid>
 </Window>

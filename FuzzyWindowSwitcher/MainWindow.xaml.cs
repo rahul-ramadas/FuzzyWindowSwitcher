@@ -124,6 +124,16 @@ namespace FuzzyWindowSwitcher
             WindowList.Items.Refresh();
             WindowList.UpdateLayout();
 
+            //
+            // If nothing was selected earlier, or the window that was selected is no longer
+            // present, just select the first element in the list.
+            //
+
+            if (selectIndex == -1 && !WindowList.Items.IsEmpty)
+            {
+                selectIndex = 0;
+            }
+
             if (selectIndex != -1)
             {
                 WindowList.SelectedIndex = selectIndex;
@@ -141,6 +151,31 @@ namespace FuzzyWindowSwitcher
             }
 
             OnWindowSelected();
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            //
+            // Intercept Up and Down keys and change the selected item in the window list.
+            //
+
+            if (e.Key != Key.Up && e.Key != Key.Down)
+            {
+                return;
+            }
+
+            if (WindowList.Items.IsEmpty)
+            {
+                return;
+            }
+
+            //
+            // We can assume that an element will be selected, because we do that when the window
+            // gets focus.
+            //
+
+            int curSel = WindowList.SelectedIndex;
+            (WindowList.ItemContainerGenerator.ContainerFromIndex(curSel) as ListBoxItem).Focus();
         }
     }
 }
