@@ -41,6 +41,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>3021</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,17 +53,16 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>3021</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>FuzzyWindowSwitcher.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ManagedWinapi">
-      <HintPath>.\ManagedWinapi.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,6 +95,71 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="mwinapi\ManagedWinapi\Accessibility\AccessibleObjectListener.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\Accessibility\SystemAccessibleObject.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\ApiHelper.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Audio\Mixer\Mixer.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Audio\Mixer\MixerControl.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Audio\Mixer\MixerLine.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\BitmapDataHandler.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\ClipboardNotifier.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\CodepointRange.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\COMTypeInformation.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Crosshair.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\Crosshair.Designer.cs">
+      <DependentUpon>Crosshair.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\ExtendedFileInfo.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Hooks\Hook.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\Hooks\JournalHook.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\Hooks\LowLevelHook.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\Hotkey.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\InputBlocker.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\KeyboardKey.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\LockKeyResetter.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\MachineIdentifiers.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\PixelData.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\PrivilegedActions.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\ProcessMemoryChunk.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\ProcessTree.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\SendKeysEscaper.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\ShortcutBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\ShortcutBox.Designer.cs">
+      <DependentUpon>ShortcutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\TextCursor.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\TextCursorProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Contents\AccessibleWindowParser.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Contents\ContentParserRegistry.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Contents\ListParser.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Contents\TextFieldParser.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Contents\WindowContent.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Contents\WindowContentParser.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\EventDispatchingNativeWindow.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\PInvokeTypes.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\Screenshot.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\SystemListBox.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\SystemListView.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\SystemTreeView.cs" />
+    <Compile Include="mwinapi\ManagedWinapi\Windows\SystemWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -108,10 +173,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="mwinapi\ManagedWinapi\Crosshair.resx">
+      <DependentUpon>Crosshair.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mwinapi\ManagedWinapi\ShortcutBox.resx">
+      <DependentUpon>ShortcutBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="mwinapi\ManagedWinapi\ManagedWinapiKey.snk" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -143,6 +215,25 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FuzzyWindowSwitcher.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mwinapi\ManagedWinapi\crosshair.cur" />
+    <Resource Include="mwinapi\ManagedWinapi\crosshair.ico" />
+    <Content Include="mwinapi\ManagedWinapi\ManagedWinapi-2010.csproj" />
+    <Content Include="mwinapi\ManagedWinapi\ManagedWinapi.csproj" />
+    <Content Include="mwinapi\ManagedWinapi\ManagedWinapiNativeHelper.dll" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="Accessibility">
+      <Guid>{1EA4DBF0-3C3B-11CF-810C-00AA00389B71}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

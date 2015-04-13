@@ -1,0 +1,3 @@
+[submodule "FuzzyWindowSwitcher/mwinapi"]
+	path = FuzzyWindowSwitcher/mwinapi
+	url = git@github.com:mwinapi/mwinapi.git
