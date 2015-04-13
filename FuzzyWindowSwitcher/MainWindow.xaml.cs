@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
 using System.IO;
+using System.Globalization;
 using ManagedWinapi.Windows;
 
 namespace FuzzyWindowSwitcher
@@ -41,6 +42,8 @@ namespace FuzzyWindowSwitcher
             m_Windows = new List<SystemWindow>();
             WindowList.DisplayMemberPath = "Title";
             WindowList.ItemsSource = m_Windows;
+            var view = CollectionViewSource.GetDefaultView(WindowList.ItemsSource) as CollectionView;
+            view.Filter = FilterWindowList;
         }
 
         static bool IsAppWindow(SystemWindow Window)
@@ -109,38 +112,61 @@ namespace FuzzyWindowSwitcher
             // select it.
             //
 
-            var selectedItem = WindowList.SelectedItem;
-            int selectIndex = -1;
-
-            if (selectedItem != null)
-            {
-                var selectedWindow = selectedItem as SystemWindow;
-                selectIndex = Array.FindIndex(windows, (wnd) => wnd.HWnd == selectedWindow.HWnd);
-            }
+            var selectedWindow = WindowList.SelectedItem as SystemWindow;
 
             m_Windows.Clear();
             m_Windows.AddRange(windows);
 
             WindowList.Items.Refresh();
-            WindowList.UpdateLayout();
+            CollectionViewSource.GetDefaultView(WindowList.ItemsSource).Refresh();
 
             //
-            // If nothing was selected earlier, or the window that was selected is no longer
-            // present, just select the first element in the list.
+            // If the previously selected window is not found in the new list, simply select
+            // the first element.
             //
 
-            if (selectIndex == -1 && !WindowList.Items.IsEmpty)
+            int selectIndex = 0;
+
+            if (selectedWindow != null)
             {
-                selectIndex = 0;
+                for (int i = 0; i < WindowList.Items.Count; ++i)
+                {
+                    SystemWindow wnd = WindowList.Items[i] as SystemWindow;
+                    if (wnd.HWnd == selectedWindow.HWnd)
+                    {
+                        selectIndex = i;
+                        break;
+                    }
+                }
             }
 
-            if (selectIndex != -1)
+            if (!WindowList.Items.IsEmpty)
             {
                 WindowList.SelectedIndex = selectIndex;
-                (WindowList.ItemContainerGenerator.ContainerFromIndex(selectIndex) as ListBoxItem).Focus();
+                WindowList.UpdateLayout();
+                (WindowList.ItemContainerGenerator.ContainerFromIndex(selectIndex) as ListViewItem).Focus();
             }
 
             FuzzySearchTitle.Focus();
+        }
+
+        private bool FilterWindowList(object wnd)
+        {
+            var filter = FuzzySearchTitle.Text;
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                return true;
+            }
+
+            var window = wnd as SystemWindow;
+
+            int index = CultureInfo.InvariantCulture.CompareInfo.IndexOf(window.Title, filter, CompareOptions.IgnoreCase);
+            if (index != -1)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
@@ -151,12 +177,13 @@ namespace FuzzyWindowSwitcher
             }
 
             OnWindowSelected();
+            e.Handled = true;
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             //
-            // Intercept Up and Down keys and change the selected item in the window list.
+            // Intercept Up and Down keys and switch focus to the window list.
             //
 
             if (e.Key != Key.Up && e.Key != Key.Down)
@@ -169,18 +196,42 @@ namespace FuzzyWindowSwitcher
                 return;
             }
 
-            //
-            // We can assume that an element will be selected, because we do that when the window
-            // gets focus.
-            //
+            if (!FuzzySearchTitle.IsFocused)
+            {
+                return;
+            }
 
-            int curSel = WindowList.SelectedIndex;
-            (WindowList.ItemContainerGenerator.ContainerFromIndex(curSel) as ListBoxItem).Focus();
+            ((UIElement)Keyboard.FocusedElement).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
         }
 
         private void OnKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             FuzzySearchTitle.SelectAll();
+        }
+
+        private void OnListKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            int index = WindowList.SelectedIndex;
+            if (index == -1)
+            {
+                return;
+            }
+
+            (WindowList.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem).Focus();
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(WindowList.ItemsSource).Refresh();
+
+            //
+            // If what was selected is now filtered out, select the first window.
+            //
+
+            if (WindowList.SelectedIndex == -1 && !WindowList.Items.IsEmpty)
+            {
+                WindowList.SelectedIndex = 0;
+            }
         }
     }
 }
