@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Drawing;
 using System.IO;
 using System.Globalization;
+using System.Diagnostics;
 using ManagedWinapi.Windows;
 using ManagedWinapi;
 
@@ -57,8 +58,20 @@ namespace FuzzyWindowSwitcher
 
         static bool IsAppWindow(SystemWindow Window)
         {
-            return Window.Visible &&
+            bool isAppWindow = Window.Visible &&
                 !Window.ExtendedStyle.HasFlag(WindowExStyleFlags.TOOLWINDOW);
+
+            if (!isAppWindow)
+            {
+                return false;
+            }
+
+            if (Window.Process.Id == Process.GetCurrentProcess().Id)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void HandleEsc(object sender, KeyEventArgs e)
