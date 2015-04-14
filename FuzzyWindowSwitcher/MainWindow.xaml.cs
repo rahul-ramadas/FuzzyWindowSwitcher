@@ -16,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Globalization;
 using ManagedWinapi.Windows;
+using ManagedWinapi;
 
 namespace FuzzyWindowSwitcher
 {
@@ -30,12 +31,7 @@ namespace FuzzyWindowSwitcher
             m_NotifyIcon.Icon = new System.Drawing.Icon(iconStream);
             iconStream.Dispose();
             m_NotifyIcon.Visible = true;
-            m_NotifyIcon.Click +=
-                delegate(object Sender, EventArgs Args)
-                {
-                    this.Show();
-                    this.WindowState = WindowState.Normal;
-                };
+            m_NotifyIcon.Click += OpenMe;
 
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
 
@@ -44,6 +40,19 @@ namespace FuzzyWindowSwitcher
             WindowList.ItemsSource = m_Windows;
             var view = CollectionViewSource.GetDefaultView(WindowList.ItemsSource) as CollectionView;
             view.Filter = FilterWindowList;
+
+            m_Hotkey = new Hotkey();
+            m_Hotkey.KeyCode = System.Windows.Forms.Keys.Oemtilde;
+            m_Hotkey.WindowsKey = true;
+            m_Hotkey.HotkeyPressed += OpenMe;
+            m_Hotkey.Enabled = true;
+        }
+
+        private void OpenMe(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = WindowState.Normal;
+            this.Activate();
         }
 
         static bool IsAppWindow(SystemWindow Window)
@@ -79,6 +88,7 @@ namespace FuzzyWindowSwitcher
 
         private System.Windows.Forms.NotifyIcon m_NotifyIcon;
         private List<SystemWindow> m_Windows;
+        Hotkey m_Hotkey;
 
         private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -100,6 +110,9 @@ namespace FuzzyWindowSwitcher
             {
                 selectedWindow.WindowState = System.Windows.Forms.FormWindowState.Normal;
             }
+
+            FuzzySearchTitle.Text = "";
+            WindowState = WindowState.Minimized;
         }
 
         private void OnActivated(object sender, EventArgs e)
